@@ -2,6 +2,8 @@
 const express = require('express')
 const { graphqlHTTP } = require('express-graphql')
 const { buildSchema } = require('graphql')
+// mockDB
+const petList = require('./petList.json')
 
 // schema
 const schema = buildSchema(`
@@ -16,9 +18,15 @@ const schema = buildSchema(`
         lunch 
         dinner
     }
+    type Pet {
+        name: String!
+        species: String!
+    }
     type Query {
         getAbout: About
         getMeal(time: MealTime!): Meal
+        getPet(id: Int!): Pet
+        allPets: [Pet!]! 
     }
 `)
 
@@ -31,7 +39,13 @@ const root = {
         const allMeals = { breakfast: 'toast', lunch: 'noodles', dinner: 'pizza' }
         const meal = allMeals[time]
 		return { description: meal }
-	}
+	},
+    getPet: ({ id }) => {	
+		return petList[id]
+	},
+	allPets: () => {	
+		return petList
+	},
 }
 
 // app
