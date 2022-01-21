@@ -43,8 +43,10 @@ const schema = buildSchema(`
     type Time {
         time: Int
     }
-    type Number {
-        number: Int
+    type Dice {
+        total: Int!
+        sides: Int!
+        rolls: [Int!]
     }
     type Query {
         getAbout: About
@@ -56,7 +58,8 @@ const schema = buildSchema(`
         firstGame: Game
         lastGame: Game
         getTime(type: TimeSettings!): Time
-        getRandom(range: Int!): Number
+        getRandom(range: Int!): Int
+        getRolls(sides: Int!, rolls: Int!): Dice
     }
 `)
 
@@ -94,7 +97,14 @@ const root = {
         return { time: allTypes[type] }
     },
     getRandom: ({ range }) => {
-        return { number: Math.floor(Math.random() * range) }
+        return Math.floor(Math.random() * range)
+    },
+    getRolls: ({ sides, rolls }) => {
+        const roll = []
+        for (let i=0; i<rolls; i++) {
+            roll.push(Math.floor(Math.random()*(sides))+1)
+        }
+        return { total: roll.reduce((a, b) => a + b, 0), sides: sides, rolls: roll }
     }
 }
 
