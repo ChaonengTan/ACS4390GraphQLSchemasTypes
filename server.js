@@ -60,6 +60,10 @@ const schema = buildSchema(`
         getTime(type: TimeSettings!): Time
         getRandom(range: Int!): Int
         getRolls(sides: Int!, rolls: Int!): Dice
+        getGameCount: Int
+        gamesInRange(start: Int!, count: Int!): [Game!]!
+        getGameByLeaderboardScore(score: String!): [Game!]
+        allUrl: [String!]!
     }
 `)
 
@@ -105,6 +109,18 @@ const root = {
             roll.push(Math.floor(Math.random()*(sides))+1)
         }
         return { total: roll.reduce((a, b) => a + b, 0), sides: sides, rolls: roll }
+    },
+    getGameCount: () => {
+        return gameData.length
+    },
+    gamesInRange: ({ start, count }) => {
+        return gameData.slice(start, start+count)
+    },
+    getGameByLeaderboardScore: ({ score }) => {
+        return gameData.filter(data => data.leaderboard == score)
+    },
+    allUrl: () => {
+        return gameData.map(data => data.url)
     }
 }
 
