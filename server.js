@@ -65,6 +65,10 @@ const schema = buildSchema(`
         getGameByLeaderboardScore(score: String!): [Game!]
         allUrl: [String!]!
     }
+    type Mutation {
+        updatePet(id: Int!, name: String, species: String): Pet
+        deletePet(id: Int!): Pet
+    } 
 `)
 
 // resolver
@@ -121,6 +125,23 @@ const root = {
     },
     allUrl: () => {
         return gameData.map(data => data.url)
+    },
+    updatePet: ({ id, name, species }) => {
+        const pet = petList[id]
+        if (pet === undefined) {
+          return null 
+        }
+        pet.name = name || pet.name 
+        pet.species = species || pet.species
+        return pet
+    },
+    deletePet: ({ id }) => {
+        if (petList[id] === undefined) {
+            return null 
+        }
+        const rem = petList[id]
+        petList.splice(id, 1)
+        return rem
     }
 }
 
