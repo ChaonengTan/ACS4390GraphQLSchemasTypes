@@ -68,6 +68,7 @@ const schema = buildSchema(`
     type Mutation {
         updatePet(id: Int!, name: String, species: String): Pet
         deletePet(id: Int!): Pet
+        createPet(name: String!, species: String!): Pet
     } 
 `)
 
@@ -142,6 +143,10 @@ const root = {
         const rem = petList[id]
         petList.splice(id, 1)
         return rem
+    },
+    createPet: ({ name, species }) => {
+        petList.push({ 'name':name, 'species':species })
+        return petList[petList.length - 1]
     }
 }
 
